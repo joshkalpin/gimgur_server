@@ -3,6 +3,10 @@ require 'net/https'
 require 'net/http'
 require 'json'
 
+get '/' do
+  File.read(File.join('public', 'index.html'))
+end
+
 post '/' do
   request.body.rewind
   payload = JSON.parse(request.body.read)
@@ -35,9 +39,7 @@ def create_album(title)
 end
 
 def imgur_request(path, type)
-  headers    = {
-      'Authorization' => "Client-ID #{ENV['IMGUR_API_KEY']}"
-  }
+  headers = { 'Authorization' => "Client-ID #{ENV['IMGUR_API_KEY']}" }
 
   uri = URI("https://api.imgur.com#{path}")
 
