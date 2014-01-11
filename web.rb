@@ -1,23 +1,53 @@
 require 'sinatra'
 require 'net/https'
 require 'net/http'
-require 'net/https'
+require 'json'
 
-get '/' do
-  imgur
+post '/' do
+  request.body.rewind
+  payload = JSON.parse(request.body.read)
+
+  images = payload['imgs']
+
+  status_code 400 if images.nil?
+
+  album = create_album
+
+  upload_images(images, album['deletehash'])
+
+  album['id']
+end
+
+def upload_images(images, deletehash)
+  images.each do |image|
+    imgur_request("/3/image?image=#{image}&album=#{deletehash}&type=URL", 'post')
+  end
 end
 
 
-def imgur
+def create_album
+  response = imgur_request('/3/album', 'post')
+  body = JSON.parse(response.body)
+  body['data']
+end
+
+def imgur_request(path, type)
   headers    = {
-      'Authorization' => 'Client-ID ' + ENV['IMGUR_API_KEY']
+      'Authorization' => "Client-ID #{ENV['IMGUR_API_KEY']}"
   }
-  path = "/3/album/"
+
   uri = URI("https://api.imgur.com#{path}")
-  request = Net::HTTP::Post.new(path, headers)
 
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = true
-  response = http.request(request)
-  response.body
+  request = create_request(path, type, headers)
+  http.request(request)
+end
+
+def create_request(path, type, headers)
+  if type == 'post'
+    Net::HTTP::Post.new(path, headers)
+  else
+    Net::HTTP::Get.new(path, headers)
+  end
 end
