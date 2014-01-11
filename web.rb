@@ -12,9 +12,12 @@ def imgur
   headers    = {
       'Authorization' => 'Client-ID ' + ENV['IMGUR_API_KEY']
   }
-  path = "/3/gallery/album/"
+  path = "/3/album/"
   uri = URI("https://api.imgur.com#{path}")
-  request = Net::HTTP::Get.new(path, headers)
+  request = Net::HTTP::Post.new(path, headers)
 
-  Net::HTTP.new(uri.host, uri.port).start {|http| http.request(request) }
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+  response = http.request(request)
+  response.body
 end
