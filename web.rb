@@ -8,10 +8,10 @@ post '/' do
   payload = JSON.parse(request.body.read)
 
   images = payload['imgs']
-
   status_code 400 if images.nil?
 
-  album = create_album
+  title = payload['title']
+  album = create_album(title)
 
   upload_images(images, album['deletehash'])
 
@@ -25,8 +25,11 @@ def upload_images(images, deletehash)
 end
 
 
-def create_album
-  response = imgur_request('/3/album', 'post')
+def create_album(title)
+  path = '/3/album'
+  path += "?title=#{title}" unless title.nil?
+
+  response = imgur_request(path, 'post')
   body = JSON.parse(response.body)
   body['data']
 end
