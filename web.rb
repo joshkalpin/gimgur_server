@@ -19,7 +19,7 @@ post '/' do
 
   upload_images(images, album['deletehash'])
 
-  album['id']
+  album['id'].to_json
 end
 
 def upload_images(images, deletehash)
