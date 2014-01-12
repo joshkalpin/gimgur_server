@@ -3,10 +3,12 @@ GEM
   specs:
     daemons (1.1.9)
     eventmachine (1.0.3)
+    github-markup (1.0.0)
     json (1.8.1)
     rack (1.5.2)
     rack-protection (1.5.1)
       rack
+    redcarpet (3.0.0)
     sinatra (1.4.4)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -21,6 +23,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  github-markup
   json
+  redcarpet
   sinatra
   thin

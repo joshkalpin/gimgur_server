@@ -2,9 +2,12 @@ require 'sinatra'
 require 'net/https'
 require 'net/http'
 require 'json'
+require 'github/markup'
+require 'redcarpet'
 
 get '/' do
-  File.read(File.join('public', 'index.html'))
+  readme_path = 'README.md'
+  GitHub::Markup.render(readme_path, File.read(readme_path))
 end
 
 post '/' do
